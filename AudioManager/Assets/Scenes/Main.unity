@@ -155,7 +155,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioclip:
     name: 
-    myClip: {fileID: 0}
+    myClip: {fileID: 8300000, guid: fdd0ea26823b948cfaef515115cf44cd, type: 3}
     volume: 0
     myAudioSource: {fileID: 0}
     isLooping: 0
@@ -269,7 +269,7 @@ MonoBehaviour:
     volume: 1
     myAudioSource: {fileID: 0}
     isLooping: 0
-    playOnAwake: 1
+    playOnAwake: 0
 --- !u!4 &470910258
 Transform:
   m_ObjectHideFlags: 0

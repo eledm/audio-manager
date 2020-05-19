@@ -1,9 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using UnityEditor;
+﻿using UnityEditorInternal;
 using UnityEngine;
-using UnityEngine.Assertions.Must;
 using UnityEngine.Audio;
 
 public class AudioManager : MonoBehaviour
@@ -27,9 +23,6 @@ public class AudioManager : MonoBehaviour
 
 
         //assign the audio item settings to its audio source
-        audioItems = audioItems.Add FindObjectsOfType<AudioItem>();
-        AudioItem[] array;
-        
         foreach (var sound in audioItems)
         {
             sound.myAudioSource = gameObject.AddComponent<AudioSource>();
@@ -43,15 +36,29 @@ public class AudioManager : MonoBehaviour
 
         }
 
+        //initialization of the AudioMixerGroups
+        mixer = Resources.Load("AudioMixer") as AudioMixer;
+
+        sfx = mixer.FindMatchingGroups("Sfx")[0];
+        music = mixer.FindMatchingGroups("Music")[0];
+        ambience = mixer.FindMatchingGroups("Ambience")[0];
+        dialogue = mixer.FindMatchingGroups("Ambience")[0];
+        
     }
     
     //array of audioitems to play
     public AudioItem[] audioItems;
-    //reference to the AudioMixer
-    AudioMixer mixer = Resources.Load("Master") as AudioMixer;
+    
     //max and min pitch change levels
     public static float maxPitch = 1.05f;
     public static float minPitch = 0.95f;
+
+    //reference to the Audio Mixer groups to use as outputs for the Audio Sources
+    AudioMixer mixer;
+    public static AudioMixerGroup sfx;
+    public static AudioMixerGroup music;
+    public static AudioMixerGroup ambience;
+    public static AudioMixerGroup dialogue;
 
     // Start is called before the first frame update
     void Start()
@@ -69,15 +76,17 @@ public class AudioManager : MonoBehaviour
 
     //Play method: takes an AudioItem and the AudioMixerGroup you want to play it through
 
-    public static void Play(AudioItem audioItem, AudioMixerGroup bus)
+    public void Play(AudioItem audioItem, GameObject gameObject, AudioMixerGroup audioMixerGroup) //AudioMixerGroup bus)
     {
+        audioItem.myAudioSource = gameObject.AddComponent<AudioSource>();
+        audioItem.myAudioSource.outputAudioMixerGroup = audioMixerGroup;
         audioItem.myAudioSource.clip = audioItem.myClip;
-        audioItem.myAudioSource.outputAudioMixerGroup = bus;
+        //audioItem.myAudioSource.outputAudioMixerGroup = bus;
         audioItem.myAudioSource.Play();
     }
 
     //stops playing the selected AudioItem
-    public static void Stop(AudioItem audioItem)
+    public void Stop(AudioItem audioItem)
     {
         if (audioItem.myAudioSource.isPlaying == true)
             audioItem.myAudioSource.Stop();
@@ -86,7 +95,7 @@ public class AudioManager : MonoBehaviour
     }
 
     //pauses the selected audio item
-    public static void Pause(AudioItem audioItem)
+    public void Pause(AudioItem audioItem)
     {
         if (audioItem.myAudioSource.isPlaying == true)
             audioItem.myAudioSource.Pause();
@@ -95,7 +104,7 @@ public class AudioManager : MonoBehaviour
     }   
 
     //unpauses the selected audio item
-    public static void Unpause(AudioItem audioItem)
+    public void Unpause(AudioItem audioItem)
     {
         if (audioItem.myAudioSource.isPlaying == false)
             audioItem.myAudioSource.UnPause();
@@ -104,7 +113,7 @@ public class AudioManager : MonoBehaviour
     }
 
     //loop through all the the audio sources and stop
-    public static void StopAll()
+    public void StopAll()
     {
         var audioSources = FindObjectsOfType<AudioSource>();
         foreach (AudioSource audio in audioSources)
@@ -114,7 +123,7 @@ public class AudioManager : MonoBehaviour
     }
 
     //loop through all audio sources and pause
-    public static void PauseAll()
+    public void PauseAll()
     {
         var audioSources = FindObjectsOfType<AudioSource>();
         foreach (AudioSource audio in audioSources)
@@ -124,7 +133,7 @@ public class AudioManager : MonoBehaviour
     }
 
     //unpauses all audiosources
-    public static void UnpauseAll()
+    public void UnpauseAll()
     {
         var audioSources = FindObjectsOfType<AudioSource>();
         foreach (AudioSource audio in audioSources)
@@ -134,10 +143,11 @@ public class AudioManager : MonoBehaviour
     }
 
 
-    public static void PlayRandomizePitch(AudioItem audio, AudioMixerGroup bus)
+    public void PlayRandomizePitch(AudioItem audio, GameObject gameObject)
     {
-        audio.myAudioSource.outputAudioMixerGroup = bus;
-        audio.myAudioSource.pitch = Random.Range(minPitch, maxPitch);
+        audio.myAudioSource = gameObject.AddComponent<AudioSource>();
+        audio.myAudioSource.outputAudioMixerGroup = sfx;
+        audio.myAudioSource.pitch = UnityEngine.Random.Range(minPitch, maxPitch);
         audio.myAudioSource.Play();
     }
 
