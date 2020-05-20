@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -28,7 +29,16 @@ public class SphereAction : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.F))
         {
-            AudioManager.Instance.PlayRandomizePitch(audioclip, gameObject);
+            AudioManager.Instance.PlaySfx(audioclip, gameObject);
+        }
+
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            AudioManager.Instance.Pause(audioclip);
+        }
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            AudioManager.Instance.Play(audioclip, gameObject, AudioManager.ambience);
         }
     }
 

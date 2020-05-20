@@ -43,8 +43,14 @@ public class AudioManager : MonoBehaviour
         music = mixer.FindMatchingGroups("Music")[0];
         ambience = mixer.FindMatchingGroups("Ambience")[0];
         dialogue = mixer.FindMatchingGroups("Ambience")[0];
+
+        audios = FindObjectsOfType(typeof(AudioItem));
         
+ 
+
     }
+
+    public Object[] audios;
     
     //array of audioitems to play
     public AudioItem[] audioItems;
@@ -80,8 +86,22 @@ public class AudioManager : MonoBehaviour
     {
         audioItem.myAudioSource = gameObject.AddComponent<AudioSource>();
         audioItem.myAudioSource.outputAudioMixerGroup = audioMixerGroup;
+        audioItem.myAudioSource.volume = audioItem.volume;
+        audioItem.myAudioSource.loop = audioItem.isLooping;
+        audioItem.myAudioSource.playOnAwake = audioItem.playOnAwake;
         audioItem.myAudioSource.clip = audioItem.myClip;
         //audioItem.myAudioSource.outputAudioMixerGroup = bus;
+        audioItem.myAudioSource.Play();
+    }
+
+    public void PlaySfx(AudioItem audioItem, GameObject gameObject)
+    {
+        audioItem.myAudioSource = gameObject.AddComponent<AudioSource>();
+        audioItem.myAudioSource.outputAudioMixerGroup = sfx;
+        audioItem.myAudioSource.volume = audioItem.volume;
+        audioItem.myAudioSource.loop = audioItem.isLooping;
+        audioItem.myAudioSource.playOnAwake = audioItem.isLooping;
+        audioItem.myAudioSource.pitch = UnityEngine.Random.Range(minPitch, maxPitch);
         audioItem.myAudioSource.Play();
     }
 
@@ -143,13 +163,7 @@ public class AudioManager : MonoBehaviour
     }
 
 
-    public void PlayRandomizePitch(AudioItem audio, GameObject gameObject)
-    {
-        audio.myAudioSource = gameObject.AddComponent<AudioSource>();
-        audio.myAudioSource.outputAudioMixerGroup = sfx;
-        audio.myAudioSource.pitch = UnityEngine.Random.Range(minPitch, maxPitch);
-        audio.myAudioSource.Play();
-    }
+    
 
     #endregion
 }

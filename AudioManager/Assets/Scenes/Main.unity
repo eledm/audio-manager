@@ -156,10 +156,10 @@ MonoBehaviour:
   audioclip:
     name: 
     myClip: {fileID: 8300000, guid: fdd0ea26823b948cfaef515115cf44cd, type: 3}
-    volume: 0
+    volume: 1
     myAudioSource: {fileID: 0}
-    isLooping: 0
-    playOnAwake: 0
+    isLooping: 1
+    playOnAwake: 1
 --- !u!135 &457204523
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -263,6 +263,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51b57b97fd19b487aa8ecb4de0354a99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  audios: []
   audioItems:
   - name: Hola
     myClip: {fileID: 8300000, guid: fdd0ea26823b948cfaef515115cf44cd, type: 3}
