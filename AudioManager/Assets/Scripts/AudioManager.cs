@@ -44,14 +44,8 @@ public class AudioManager : MonoBehaviour
         ambience = mixer.FindMatchingGroups("Ambience")[0];
         dialogue = mixer.FindMatchingGroups("Ambience")[0];
 
-        audios = FindObjectsOfType(typeof(AudioItem));
-        
- 
-
     }
 
-    public Object[] audios;
-    
     //array of audioitems to play
     public AudioItem[] audioItems;
     
@@ -66,17 +60,6 @@ public class AudioManager : MonoBehaviour
     public static AudioMixerGroup ambience;
     public static AudioMixerGroup dialogue;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     #region METHODS
 
