@@ -1,4 +1,4 @@
-﻿using UnityEditorInternal;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -31,7 +31,7 @@ public class AudioManager : MonoBehaviour
             sound.myAudioSource.loop = sound.isLooping;
             if (sound.playOnAwake == true)
             {
-                sound.myAudioSource.Play();
+                Play(sound, gameObject, music);
             }
 
         }
@@ -48,10 +48,12 @@ public class AudioManager : MonoBehaviour
 
     //array of audioitems to play
     public AudioItem[] audioItems;
-    
+
     //max and min pitch change levels
-    public static float maxPitch = 1.05f;
-    public static float minPitch = 0.95f;
+
+    [Header("Sfx Pitch")]
+    public float maxPitch = 1.05f;
+    public float minPitch = 0.95f;
 
     //reference to the Audio Mixer groups to use as outputs for the Audio Sources
     AudioMixer mixer;
@@ -65,21 +67,36 @@ public class AudioManager : MonoBehaviour
 
     //Play method: takes an AudioItem and the AudioMixerGroup you want to play it through
 
-    public void Play(AudioItem audioItem, GameObject gameObject, AudioMixerGroup audioMixerGroup) //AudioMixerGroup bus)
+    public void Play(AudioItem audioItem, GameObject gameObject, AudioMixerGroup audioMixerGroup)
     {
-        audioItem.myAudioSource = gameObject.AddComponent<AudioSource>();
+        if (gameObject.GetComponent<AudioSource>() == null)
+        {
+            audioItem.myAudioSource = gameObject.AddComponent<AudioSource>();
+        }
+        else
+        {
+            audioItem.myAudioSource = gameObject.GetComponent<AudioSource>();
+        }
         audioItem.myAudioSource.outputAudioMixerGroup = audioMixerGroup;
         audioItem.myAudioSource.volume = audioItem.volume;
         audioItem.myAudioSource.loop = audioItem.isLooping;
         audioItem.myAudioSource.playOnAwake = audioItem.playOnAwake;
         audioItem.myAudioSource.clip = audioItem.myClip;
-        //audioItem.myAudioSource.outputAudioMixerGroup = bus;
         audioItem.myAudioSource.Play();
     }
 
     public void PlaySfx(AudioItem audioItem, GameObject gameObject)
     {
-        audioItem.myAudioSource = gameObject.AddComponent<AudioSource>();
+        if (gameObject.GetComponent<AudioSource>() == null)
+        {
+            audioItem.myAudioSource = gameObject.AddComponent<AudioSource>();
+        }
+        else
+        {
+            audioItem.myAudioSource = gameObject.GetComponent<AudioSource>();
+        }
+
+        audioItem.myAudioSource.clip = audioItem.myClip;
         audioItem.myAudioSource.outputAudioMixerGroup = sfx;
         audioItem.myAudioSource.volume = audioItem.volume;
         audioItem.myAudioSource.loop = audioItem.isLooping;
@@ -104,7 +121,7 @@ public class AudioManager : MonoBehaviour
             audioItem.myAudioSource.Pause();
         else
             Debug.Log("AudioItem " + audioItem.name + " is already not playing.");
-    }   
+    }
 
     //unpauses the selected audio item
     public void Unpause(AudioItem audioItem)
@@ -145,8 +162,54 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+    public void PlayFadeIn(AudioItem audioItem, GameObject gameObject, AudioMixerGroup audioMixerGroup)
+    {
+        StartCoroutine("FadeIn");
+    }
 
-    
+    public void PlayOneShot(AudioItem audioItem, GameObject gameObject, AudioMixerGroup audioMixerGroup)
+    {
 
-    #endregion
+    }
+
+
+
+    //COROUTINES
+
+    private AudioSource myAudioSource;
+    private float _minVolume = 0f;
+    private float _maxVolume = 1f;
+    private float speed = 1f;
+
+    public IEnumerator FadeIn(AudioItem audioItem, GameObject gameObject, AudioMixerGroup audioMixerGroup)
+    {
+
+        if (gameObject.GetComponent<AudioSource>() == null || gameObject.GetComponent<AudioSource>().isPlaying)
+        {
+            audioItem.myAudioSource = gameObject.AddComponent<AudioSource>();
+        }
+        audioItem.myAudioSource.outputAudioMixerGroup = audioMixerGroup;
+
+        audioItem.myAudioSource.loop = audioItem.isLooping;
+        audioItem.myAudioSource.playOnAwake = audioItem.playOnAwake;
+        audioItem.myAudioSource.clip = audioItem.myClip;
+
+
+
+        myAudioSource.volume = _minVolume;
+        float audioVolume = myAudioSource.volume;
+        myAudioSource.Play();
+
+        while (myAudioSource.volume < _maxVolume)
+        {
+            audioVolume += speed;
+            myAudioSource.volume = audioVolume;
+            yield return new WaitForSeconds(0.1F);
+        }
+
+    }
+
 }
+
+
+#endregion
